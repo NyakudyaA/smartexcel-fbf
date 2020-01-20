@@ -135,9 +135,9 @@ class SmartExcel():
         assert self.WRITEMODE
 
         # First, we create the user sheets
-        count=0
+        count = 0
         for sheet_key, sheet_data in self.sheets.items():
-            count=+1
+            count = +1
             if not sheet_data['reserved']:
                 try:
                     name = sheet_data['name']
@@ -148,13 +148,14 @@ class SmartExcel():
                         print("Name looks like a cell name in defined_name(): '%s'" % name)
                         return -1
                     if len(name) > 31:
-                        raise Exception(" Excel worksheet name '%s' must be <= 31 chars." %name)
-                        name_without_space = name[:31].replace(" ", "_")
-                        name = name_without_space + str(count)
+                        raise Exception(" Excel worksheet name '%s' must be <= 31 chars." % name)
+                    name_without_space = name[:31].replace(" ", "_")
+                    name = name_without_space + str(count)
+
                     sheet_data['fd'] = self.workbook.add_worksheet(name)
                     for sheets in sheet_data['fd']:
                         if name.lower() == sheets.name.lower():
-                            raise Exception("Sheet name '%s', with case ignored, is already in use." % name)
+                            raise Exception("The sheet '%s', with case ignored, is already in use." % name)
                 except xlsxwriter.exceptions.DuplicateWorksheetName:
                     pass
 
