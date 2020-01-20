@@ -140,7 +140,7 @@ class SmartExcel():
             count = +1
             if not sheet_data['reserved']:
                 try:
-                    name = sheet_data['name']
+                    name = sheet_data['name'].replace(" ", "_") + str(count)
                     print(name)
                     if not re.match(r'^[a-zA-Z_\\][a-zA-Z_.]+', name):
                         print("Invalid Excel characters in defined_name(): '%s'" % name)
@@ -150,11 +150,8 @@ class SmartExcel():
                         return -1
                     if len(name) > 31:
                         raise Exception(" Excel worksheet name '%s' must be <= 31 chars." % name)
-                    name_without_space = name[:31].replace(" ", "_")
-                    distinct_name = name_without_space + str(count)
-                    print(distinct_name)
 
-                    sheet_data['fd'] = self.workbook.add_worksheet(distinct_name)
+                    sheet_data['fd'] = self.workbook.add_worksheet(name)
 
                 except xlsxwriter.exceptions.DuplicateWorksheetName:
                     pass
@@ -164,9 +161,7 @@ class SmartExcel():
         for sheet_key, sheet_data in self.sheets.items():
             unique_name += 1
             if sheet_data['reserved']:
-                name = sheet_data['name']
-                name_without_space = name[:31].replace(" ", "_")
-                name = name_without_space + str(unique_name)
+                name = sheet_data['name'].replace(" ", "_") + str(count)
                 sheet_data['fd'] = self.workbook.add_worksheet(name)
                 sheet_data['fd'].protect()
                 getattr(
