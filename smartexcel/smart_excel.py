@@ -141,6 +141,7 @@ class SmartExcel():
             if not sheet_data['reserved']:
                 try:
                     name = sheet_data['name']
+                    print(name)
                     if not re.match(r'^[a-zA-Z_\\][a-zA-Z_.]+', name):
                         print("Invalid Excel characters in defined_name(): '%s'" % name)
                         return -1
@@ -150,23 +151,27 @@ class SmartExcel():
                     if len(name) > 31:
                         raise Exception(" Excel worksheet name '%s' must be <= 31 chars." % name)
                     name_without_space = name[:31].replace(" ", "_")
-                    name = name_without_space + str(count)
+                    distinct_name = name_without_space + str(count)
+                    print(distinct_name)
 
-                    sheet_data['fd'] = self.workbook.add_worksheet(name)
-                    for sheets in sheet_data['fd']:
-                        if name.lower() == sheets.name.lower():
-                            raise Exception("The sheet '%s', with case ignored, is already in use." % name)
+                    sheet_data['fd'] = self.workbook.add_worksheet(distinct_name)
+
                 except xlsxwriter.exceptions.DuplicateWorksheetName:
                     pass
 
         # Then, we create the reserved sheets
+        unique_name = 0
         for sheet_key, sheet_data in self.sheets.items():
+            unique_name += 1
             if sheet_data['reserved']:
-                sheet_data['fd'] = self.workbook.add_worksheet(sheet_data['name'])
+                name = sheet_data['name']
+                name_without_space = name[:31].replace(" ", "_")
+                name = name_without_space + str(unique_name)
+                sheet_data['fd'] = self.workbook.add_worksheet(name)
                 sheet_data['fd'].protect()
                 getattr(
                     self,
-                    f"build{sheet_data['name']}"
+                    f"build{name}"
                 )()
                 # self.build_meta()
                 # self.build_data()
