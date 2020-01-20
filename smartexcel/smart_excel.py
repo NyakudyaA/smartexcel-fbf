@@ -135,7 +135,9 @@ class SmartExcel():
         assert self.WRITEMODE
 
         # First, we create the user sheets
+        count=0
         for sheet_key, sheet_data in self.sheets.items():
+            count=+1
             if not sheet_data['reserved']:
                 try:
                     name = sheet_data['name']
@@ -147,7 +149,8 @@ class SmartExcel():
                         return -1
                     if len(name) > 31:
                         raise Exception(" Excel worksheet name '%s' must be <= 31 chars." %name)
-                        name = name[:31]
+                        name_without_space = name[:31].replace(" ", "_")
+                        name = name_without_space + str(count)
                     sheet_data['fd'] = self.workbook.add_worksheet(name)
                     for sheets in sheet_data['fd']:
                         if name.lower() == sheets.name.lower():
